@@ -3,11 +3,13 @@
 
 """
 
+import json
 from api.v1.views import app_views
-from flask import jsonify
+from flask import Response, jsonify
 
 
 @app_views.route("/status", strict_slashes=False)
 def return_status():
     """Returns app_views object status as a JSON file"""
-    return jsonify({"status": "OK"})
+    json_data = json.dumps({"status": "OK"}, indent=4)
+    return Response(json_data + '\n', mimetype='application/json')
