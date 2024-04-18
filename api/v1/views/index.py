@@ -32,4 +32,7 @@ def return_stats():
     data['reviews'] = storage.count(Review)
     data['states'] = storage.count(State)
     data['users'] = storage.count(User)
-    return Response(json.dumps(data, indent=4) + '\n', mimetype='application/json')
+    return Response(
+        json.dumps(data, indent=4) + '\n',
+        mimetype='application/json'
+    )
