@@ -118,5 +118,5 @@ def listen_cities(city_id):
     if (request.method == 'PUT'):
         return update_city_by_id(city_id, request.get_json())
     if (request.method == "DELETE"):
-        return delete_by_id(request.get_json())
+        return delete_by_id(city_id)
     return get_cities_by_city_id(city_id)
