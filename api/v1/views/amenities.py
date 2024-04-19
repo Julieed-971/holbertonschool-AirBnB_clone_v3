@@ -5,7 +5,7 @@
 
 
 from api.v1.views import app_views
-from flask import jsonify, abort, request
+from flask import jsonify, abort, make_response, request
 from models import storage
 from models.amenity import Amenity
 
@@ -47,7 +47,7 @@ def create_amenity():
         abort(400, 'Missing name')
     amenity = Amenity(**request.get_json())
     amenity.save()
-    return jsonify(amenity.to_dict()), 201
+    return make_response(amenity.to_dict(), 201)
 
 
 @app_views.route('/amenities/<amenity_id>',
@@ -65,4 +65,4 @@ def update_amenity(amenity_id):
         if key not in ignore_keys:
             setattr(amenity, key, value)
     amenity.save()
-    return jsonify(amenity.to_dict()), 200
+    return make_response(amenity.to_dict(), 200)

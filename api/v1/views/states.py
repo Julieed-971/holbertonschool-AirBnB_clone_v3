@@ -7,17 +7,16 @@ import json
 
 
 from api.v1.views import app_views
-from flask import jsonify, request, Response
+from flask import abort, jsonify, make_response, request
 from models import storage
 from models.state import State
-from typing import List
 
 
 def send_error():
-    return jsonify({"error": "Not found"}), 404
+    return abort(404, {"error": "Not found"})
 
 
-def get_all() -> List[dict]:
+def get_all():
     """"Returns list of all states"""
     all_states_list = []
     all_states = storage.all(State)
@@ -27,7 +26,7 @@ def get_all() -> List[dict]:
     return all_states_list
 
 
-def get_by_id(state_id: str):
+def get_by_id(state_id):
     """Retrieves a State object based on its id"""
     for state in get_all():
         if state_id == state["id"]:
@@ -35,9 +34,9 @@ def get_by_id(state_id: str):
     return send_error()
 
 
-def delete_by_id(state_id: str):
+def delete_by_id(state_id):
     """Delete a state object based on its id"""
-    state: State = storage.get(State, state_id)
+    state = storage.get(State, state_id)
     if state is None:
         return send_error()
     else:
@@ -67,22 +66,18 @@ def handle_request_by_id(state_id: str):
     return send_error()
 
 
-def create(data: dict):
+def create():
     """
         Creates a State object based on JSON request
     """
     try:
-        state = State(**data)
+        state = State(**request.get_json(silent=True))
         if state.name is None:
-            return Response(
-                '{"error": "Missing name"}\n',
-                status=400,
-                mimetype='application/json'
-            )
+            return jsonify({"error": "Missing name"}), 400
         state.save()
-        return jsonify(state.to_dict()), 201
+        return make_response(state.to_dict(), 201)
     except Exception:
-        return jsonify({"error": "Not a JSON"}), 400
+        return abort(400, {"error": "Not a JSON"})
 
 
 unauthorized_keys = {
@@ -103,15 +98,11 @@ def update(state_id, data: dict):
                         setattr(state, key, data[key])
 
                 state.save()
-                return jsonify(state.to_dict()), 200
+                return make_response(state.to_dict(), 200)
         return send_error()
 
     except Exception:
-        return Response(
-            '{"error": "Not a JSON"}\n',
-            status=400,
-            mimetype='application/json'
-        )
+        return abort(400, {"error": "Not a JSON"})
 
 
 @app_views.route(
@@ -128,7 +119,7 @@ def listen(state_id):
     """Retrieves list of all State objects"""
     if state_id is None:
         if (request.method == "POST"):
-            return create(request.get_json())
+            return create()
         else:
             return handle_request()
     else:
