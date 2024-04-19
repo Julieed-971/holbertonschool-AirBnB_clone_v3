@@ -7,21 +7,14 @@ import json
 
 
 from api.v1.views import app_views
-from flask import request, Response
+from flask import jsonify, request, Response
 from models import storage
 from models.state import State
 from typing import List
 
 
 def send_error():
-    err_data = json.dumps(
-        {"error": "Not found"}
-    )
-    return Response(
-        err_data + '\n',
-        status=404,
-        content_type="application/json"
-    )
+    return jsonify({"error": "Not found"}), 404
 
 
 def get_all() -> List[dict]:
@@ -38,12 +31,7 @@ def get_by_id(state_id: str):
     """Retrieves a State object based on its id"""
     for state in get_all():
         if state_id == state["id"]:
-            state_data = json.dumps(state)
-            return Response(
-                state_data + '\n',
-                status=200,
-                mimetype='application/json'
-            )
+            return jsonify(state), 200
     return send_error()
 
 
@@ -55,23 +43,14 @@ def delete_by_id(state_id: str):
     else:
         state.delete()
         storage.save()
-        return Response(
-            json.dumps({}) + "\n",
-            status=200,
-            mimetype='application/json'
-        )
+        return jsonify({}), 200
 
 
 def handle_request():
     """
         Handles GET request for all State objects
     """
-    data = json.dumps(get_all())
-    return Response(
-        data + '\n',
-        status=200,
-        mimetype='application/json'
-    )
+    return jsonify(get_all()), 200
 
 
 def handle_request_by_id(state_id: str):
@@ -101,18 +80,9 @@ def create(data: dict):
                 mimetype='application/json'
             )
         state.save()
-        data = json.dumps(state.to_dict())
-        return Response(
-            data + '\n',
-            status=201,
-            mimetype='application/json'
-        )
+        return jsonify(state.to_dict()), 201
     except Exception:
-        return Response(
-            '{"error": "Not a JSON"}\n',
-            status=400,
-            mimetype='application/json'
-        )
+        return jsonify({"error": "Not a JSON"}), 400
 
 
 unauthorized_keys = {
@@ -133,13 +103,7 @@ def update(state_id, data: dict):
                         setattr(state, key, data[key])
 
                 state.save()
-                data = json.dumps(state.to_dict())
-
-                return Response(
-                    data + '\n',
-                    status=200,
-                    mimetype='application/json'
-                )
+                return jsonify(state.to_dict()), 200
         return send_error()
 
     except Exception:

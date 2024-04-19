@@ -6,7 +6,7 @@
 import json
 
 from api.v1.views import app_views
-from flask import Response
+from flask import Response, jsonify
 from models.amenity import Amenity
 from models.review import Review
 from models.place import Place
@@ -19,8 +19,7 @@ from models import storage
 @app_views.route("/status", strict_slashes=False)
 def return_status():
     """Returns app_views object status as a JSON file"""
-    json_data = json.dumps({"status": "OK"})
-    return Response(json_data + '\n', mimetype='application/json')
+    return jsonify({"status": "OK"})
 
 
 @app_views.route("/stats", strict_slashes=False)
@@ -33,7 +32,4 @@ def return_stats():
     data['reviews'] = storage.count(Review)
     data['states'] = storage.count(State)
     data['users'] = storage.count(User)
-    return Response(
-        json.dumps(data) + '\n',
-        mimetype='application/json'
-    )
+    return jsonify(data)
