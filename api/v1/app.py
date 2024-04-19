@@ -3,12 +3,13 @@
 starts a Flask web application
 """
 
+import json
 
-from werkzeug.exceptions import NotFound
 from api.v1.views import app_views
 from flask import Flask, Response
 from models import storage
-import json
+from werkzeug.exceptions import NotFound
+
 
 my_app = Flask(__name__)
 my_app.register_blueprint(app_views)
