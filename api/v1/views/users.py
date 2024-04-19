@@ -10,6 +10,8 @@ from models import storage
 from models.user import User
 
 
+# 04aa8357-59ec-44b3-b0db-5a5e8ceb5f58
+
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
 def get_users():
     users = storage.all(User).values()
