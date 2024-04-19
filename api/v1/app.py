@@ -6,12 +6,14 @@ starts a Flask web application
 import json
 
 from api.v1.views import app_views
-from flask import Flask, Response, jsonify
+from flask import Flask, make_response
 from models import storage
 from werkzeug.exceptions import NotFound
+#from flask_cors import CORS
 
 
 my_app = Flask(__name__)
+#CORS(my_app, resources={r"/*": {"origins": "0.0.0.0"}})
 my_app.register_blueprint(app_views)
 
 
@@ -27,7 +29,7 @@ def handle_404_error(e):
         Handles 404 errors and returns a
         JSON-formatted 404 status code response
     """
-    return jsonify({"error": "Not found"}), 404
+    return make_response(404, {"error": "Not found"})
 
 
 if __name__ == '__main__':
