@@ -5,7 +5,7 @@
 
 
 from api.v1.views import app_views
-from flask import jsonify, abort, request
+from flask import jsonify, abort, make_response, request
 from models import storage
 from models.user import User
 
@@ -41,13 +41,13 @@ def delete_user(user_id):
 def create_user():
     if not request.get_json():
         abort(400, 'Not a JSON')
-    if 'email' not in request.get_json():
+    if 'email' not in request.get_json(silent=True):
         abort(400, 'Missing email')
-    if 'password' not in request.get_json():
+    if 'password' not in request.get_json(silent=True):
         abort(400, 'Missing password')
-    user = User(**request.get_json())
+    user = User(**request.get_json(silent=True))
     user.save()
-    return jsonify(user.to_dict()), 201
+    return make_response(user.to_dict(), 201)
 
 
 @app_views.route('/users/<user_id>', methods=['PUT'], strict_slashes=False)
@@ -58,8 +58,8 @@ def update_user(user_id):
     if not request.get_json():
         abort(400, 'Not a JSON')
     ignore_keys = ['id', 'email', 'created_at', 'updated_at']
-    for key, value in request.get_json().items():
+    for key, value in request.get_json(silent=True).items():
         if key not in ignore_keys:
             setattr(user, key, value)
     user.save()
-    return jsonify(user.to_dict()), 200
+    return make_response(user.to_dict(), 200)

@@ -7,7 +7,7 @@ import json
 
 
 from api.v1.views import app_views
-from flask import abort, jsonify, make_response, request
+from flask import abort, make_response, request
 from models import storage
 from models.state import State
 
@@ -30,7 +30,7 @@ def get_by_id(state_id):
     """Retrieves a State object based on its id"""
     for state in get_all():
         if state_id == state["id"]:
-            return jsonify(state), 200
+            return make_response(state, 200)
     return send_error()
 
 
@@ -42,14 +42,14 @@ def delete_by_id(state_id):
     else:
         state.delete()
         storage.save()
-        return jsonify({}), 200
+        return make_response({}, 200)
 
 
 def handle_request():
     """
         Handles GET request for all State objects
     """
-    return jsonify(get_all()), 200
+    return make_response(get_all(), 200)
 
 
 def handle_request_by_id(state_id: str):
@@ -73,7 +73,7 @@ def create():
     try:
         state = State(**request.get_json(silent=True))
         if state.name is None:
-            return jsonify({"error": "Missing name"}), 400
+            return make_response({"error": "Missing name"}, 400)
         state.save()
         return make_response(state.to_dict(), 201)
     except Exception:
