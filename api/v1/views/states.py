@@ -55,8 +55,9 @@ def delete_by_id(state_id: str):
         return send_error()
     else:
         state.delete()
+        storage.save()
         return Response(
-            "{}",
+            json.dumps({}) + "\n",
             status=200,
             mimetype='application/json'
         )
@@ -79,7 +80,9 @@ def handle_request_by_id(state_id: str):
         Handles GET and DELETE requests
         for State objects
     """
-    if (request.method == "GET"):
+    if (request.method == "PUT"):
+        return update(state_id, request.get_json())
+    elif (request.method == "GET"):
         return get_by_id(state_id)
     elif (request.method == "DELETE"):
         return delete_by_id(state_id)
@@ -156,7 +159,7 @@ def update(state_id, data: dict):
 )
 @app_views.route(
     "/states/<state_id>",
-    methods=['PUT']
+    methods=['PUT', 'DELETE', 'GET']
 )
 def listen(state_id):
     """Retrieves list of all State objects"""
@@ -166,9 +169,4 @@ def listen(state_id):
         else:
             return handle_request()
     else:
-        if (request.method == "PUT"):
-            return update(state_id, request.get_json())
         return handle_request_by_id(state_id)
-
-
-# Updates a State object
