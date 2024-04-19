@@ -6,7 +6,7 @@ starts a Flask web application
 import json
 
 from api.v1.views import app_views
-from flask import Flask, Response
+from flask import Flask, Response, jsonify
 from models import storage
 from werkzeug.exceptions import NotFound
 
@@ -27,12 +27,7 @@ def handle_404_error(e):
         Handles 404 errors and returns a
         JSON-formatted 404 status code response
     """
-    data = json.dumps({"error": "Not found"})
-    return Response(
-        data + '\n',
-        status=404,
-        content_type="application/json"
-    )
+    return jsonify({"error": "Not found"}), 404
 
 
 if __name__ == '__main__':
