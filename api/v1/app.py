@@ -27,10 +27,7 @@ def handle_404_error(e):
         Handles 404 errors and returns a
         JSON-formatted 404 status code response
     """
-    data = json.dumps(
-        {"error": "Not found"},
-        indent=4
-    )
+    data = json.dumps({"error": "Not found"})
     return Response(
         data + '\n',
         status=404,

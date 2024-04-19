@@ -19,7 +19,7 @@ from models import storage
 @app_views.route("/status", strict_slashes=False)
 def return_status():
     """Returns app_views object status as a JSON file"""
-    json_data = json.dumps({"status": "OK"}, indent=4)
+    json_data = json.dumps({"status": "OK"})
     return Response(json_data + '\n', mimetype='application/json')
 
 
@@ -34,6 +34,6 @@ def return_stats():
     data['states'] = storage.count(State)
     data['users'] = storage.count(User)
     return Response(
-        json.dumps(data, indent=4) + '\n',
+        json.dumps(data) + '\n',
         mimetype='application/json'
     )

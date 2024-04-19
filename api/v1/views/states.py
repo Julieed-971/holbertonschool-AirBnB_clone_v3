@@ -15,8 +15,7 @@ from typing import List
 
 def send_error():
     err_data = json.dumps(
-        {"error": "Not found"},
-        indent=4
+        {"error": "Not found"}
     )
     return Response(
         err_data + '\n',
@@ -39,7 +38,7 @@ def get_by_id(state_id: str):
     """Retrieves a State object based on its id"""
     for state in get_all():
         if state_id == state["id"]:
-            state_data = json.dumps(state, indent=4)
+            state_data = json.dumps(state)
             return Response(
                 state_data + '\n',
                 status=200,
@@ -67,7 +66,7 @@ def handle_request():
     """
         Handles GET request for all State objects
     """
-    data = json.dumps(get_all(), indent=4)
+    data = json.dumps(get_all())
     return Response(
         data + '\n',
         status=200,
@@ -102,7 +101,7 @@ def create(data: dict):
                 mimetype='application/json'
             )
         state.save()
-        data = json.dumps(state.to_dict(), indent=4)
+        data = json.dumps(state.to_dict())
         return Response(
             data + '\n',
             status=201,
@@ -134,7 +133,7 @@ def update(state_id, data: dict):
                         setattr(state, key, data[key])
 
                 state.save()
-                data = json.dumps(state.to_dict(), indent=4)
+                data = json.dumps(state.to_dict())
 
                 return Response(
                     data + '\n',
