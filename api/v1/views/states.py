@@ -87,7 +87,7 @@ unauthorized_keys = {
 }
 
 
-def update(state_id, data: dict):
+def update(state_id, data):
     """Update a state name by id"""
     try:
         states = storage.all(State)
